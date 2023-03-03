@@ -13,8 +13,8 @@ import java.util.concurrent.Executors;
 
 
 public class ConcurrentApp {
-    private static final ExecutorService clientExecutor = Executors.newFixedThreadPool(300);
-    private static final ExecutorService serverExecutor = Executors.newFixedThreadPool(300);
+    private static final ExecutorService clientExecutor = Executors.newFixedThreadPool(9);
+    private static final ExecutorService serverExecutor = Executors.newFixedThreadPool(9);
 
     public static void main(String[] args) {
 
