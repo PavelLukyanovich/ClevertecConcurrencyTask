@@ -23,7 +23,7 @@ class ClientTest {
     Response response;
 
     @Test
-    void addToResponseList_whenParallelProcessing_thenMainThreadWillBlockUntilCompletion() throws InterruptedException {
+    void counterOfThreads_whenLatchIsPresent_everyThreadShouldIncrementCounter() throws InterruptedException {
 
         int numberOfThreads = 5;
         ExecutorService service = Executors.newFixedThreadPool(5);
@@ -32,6 +32,7 @@ class ClientTest {
         Client client = new Client(service, server, Arrays.asList(request),Arrays.asList(response));
         for (int i = 0; i < numberOfThreads; i++) {
             service.execute(() -> {
+                System.out.println("log - " + client.getCounterOfThreads());
                 client.setCounterOfThreads(client.getCounterOfThreads() + 1);
                 latch.countDown();
             });
