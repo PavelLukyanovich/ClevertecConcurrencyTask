@@ -23,22 +23,22 @@ class ClientTest {
     Response response;
 
     @Test
-    void counterOfThreads_whenLatchIsPresent_everyThreadShouldIncrementCounter() throws InterruptedException {
+    void counterOfThreads_whenLatchIsPresent_mainThreadShouldRunAfterThreadsWithLatchHaveBeenRan() throws InterruptedException {
 
-        int numberOfThreads = 5;
-        ExecutorService service = Executors.newFixedThreadPool(5);
+        int numberOfThreads = 10;
+        ExecutorService service = Executors.newFixedThreadPool(10);
         CountDownLatch latch = new CountDownLatch(numberOfThreads);
 
         Client client = new Client(service, server, Arrays.asList(request),Arrays.asList(response));
         for (int i = 0; i < numberOfThreads; i++) {
             service.execute(() -> {
-                System.out.println("log - " + client.getCounterOfThreads());
                 client.setCounterOfThreads(client.getCounterOfThreads() + 1);
                 latch.countDown();
             });
         }
         latch.await();
-        assertEquals(numberOfThreads,client.getCounterOfThreads());
+        assertEquals(numberOfThreads, client.getCounterOfThreads());
+        service.shutdown();
 
     }
 
