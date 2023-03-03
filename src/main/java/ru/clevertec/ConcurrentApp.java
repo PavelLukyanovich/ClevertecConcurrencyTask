@@ -1,32 +1,53 @@
 package ru.clevertec;
 
-import ru.clevertec.Server.Response;
+import ru.clevertec.models.Request;
+import ru.clevertec.models.Response;
+import ru.clevertec.service.Client;
+import ru.clevertec.service.Server;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+
 
 public class ConcurrentApp {
+    private static final ExecutorService clientExecutor = Executors.newFixedThreadPool(300);
+    private static final ExecutorService serverExecutor = Executors.newFixedThreadPool(300);
 
-    public static void main(String[] args) {
-        System.out.println("Main start");
+    public static void main(String[] args) throws Exception {
 
-        ExecutorService executor = Executors.newFixedThreadPool(4);
-        executor.submit(new Client());
-        Future<List<Response>> sub = executor.submit(new Server());
+        List<Request> requestList = Arrays.asList(
+                new Request(11),
+                new Request(22),
+                new Request(33),
+                new Request(44),
+                new Request(55),
+                new Request(66),
+                new Request(77),
+                new Request(88),
+                new Request(99));
 
-        try {
-            sub.get().stream()
-                    .forEach(System.out::println);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
+        List<Response> responses = start(requestList);
+        responses.forEach(System.out::println);
+
+    }
+
+    private static List<Response> start(List<Request> requestList) {
+        Server server = new Server(serverExecutor);
+        List<Response> responseList = new ArrayList<>();
+        Client client = new Client(clientExecutor, server, requestList, responseList);
+
+        client.run();
+        while (getSize(responseList) != requestList.size()) {
         }
+        clientExecutor.shutdown();
+        serverExecutor.shutdown();
+        return responseList;
+    }
 
-        executor.shutdown();
-
+    private static synchronized int getSize(List<Response> responseList) {
+        return responseList.size();
     }
 }
