@@ -2,7 +2,7 @@ package ru.clevertec.models;
 
 public class Response {
 
-    int responseValue;
+    public int responseValue;
 
     public Response(int responseValue) {
         this.responseValue = responseValue;

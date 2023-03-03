@@ -16,7 +16,7 @@ public class ConcurrentApp {
     private static final ExecutorService clientExecutor = Executors.newFixedThreadPool(300);
     private static final ExecutorService serverExecutor = Executors.newFixedThreadPool(300);
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
 
         List<Request> requestList = Arrays.asList(
                 new Request(11),
@@ -34,7 +34,7 @@ public class ConcurrentApp {
 
     }
 
-    private static List<Response> start(List<Request> requestList) {
+    public static List<Response> start(List<Request> requestList) {
         Server server = new Server(serverExecutor);
         List<Response> responseList = new ArrayList<>();
         Client client = new Client(clientExecutor, server, requestList, responseList);
